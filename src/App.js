@@ -6,10 +6,11 @@ function App() {
     const [state, setState] = useState("-");
     const [numberOfBreak, setNumberOfBreak] = useState(0);
     const [isTimeRunning, setIsTimeRunning] = useState(false);
-    const [workTime, setWorkTime] = useState(4);
-    const [shortBreakTime, setShortBreakTime] = useState(2);
-    const [longBreakTime, setLongBreakTime] = useState(8);
+    const [workTime, setWorkTime] = useState(15);
+    const [shortBreakTime, setShortBreakTime] = useState(10);
+    const [longBreakTime, setLongBreakTime] = useState(15);
     const [time, setTime] = useState(0);
+    const [fullTime, setFullTime] = useState(0);
     const [tabHasFocus, setTabHasFocus] = useState(true);
     const [newAlert, setNewAlert] = useState(false);
 
@@ -63,51 +64,51 @@ function App() {
             return;
         }
 
-        const interval = setInterval(() => {
-            setTime((prevTime) => prevTime - 1);
-        }, 1000);
-
         // When time runs out, set up the next period
-        if (time < 0) {
+        if (time <= 0) {
             switch (state) {
                 case "Work":
                     // If we already head two short breaks, the next one will be long
                     if (numberOfBreak === 2) {
                         setState("Long Break");
                         setTime(longBreakTime);
+                        setFullTime(longBreakTime);
                         break;
                     }
                     setState("Short Break");
                     setTime(shortBreakTime);
+                    setFullTime(shortBreakTime);
                     break;
                 case "Short Break":
                     setState("Work");
                     setTime(workTime);
+                    setFullTime(workTime);
                     setNumberOfBreak((prevRotation) => prevRotation + 1);
                     break;
                 case "Long Break":
                     setState("Work");
                     setTime(workTime);
+                    setFullTime(workTime);
                     setNumberOfBreak(0);
                     break;
                 default:
                     setState("Work");
                     setTime(workTime);
+                    setFullTime(workTime);
                     break;
             }
             setNewAlert(true);
         }
-
-        return () => clearInterval(interval);
     }, [isTimeRunning, time, state, workTime, shortBreakTime, longBreakTime, numberOfBreak]);
 
     return (
         <div>
             <Clock
-                time={time}
                 state={state}
                 isTimeRunning={isTimeRunning}
                 setIsTimeRunning={setIsTimeRunning}
+                fullTime={fullTime}
+                setTime={setTime}
             />
             <Controller
                 time={workTime}
