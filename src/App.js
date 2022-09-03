@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Clock from "./Components/Clock";
 import Controller from "./Components/Controller";
+import Question from "./Components/Question";
 
 function App() {
     const [state, setState] = useState("-");
@@ -58,14 +59,10 @@ function App() {
         return () => clearInterval(alert);
     }, [tabHasFocus, newAlert]);
 
-    // Time countdown
+    // Handle when time runs out
     useEffect(() => {
-        if (!isTimeRunning) {
-            return;
-        }
-
         // When time runs out, set up the next period
-        if (time <= 0) {
+        if (time <= 0 && isTimeRunning) {
             switch (state) {
                 case "Work":
                     // If we already head two short breaks, the next one will be long
@@ -110,6 +107,7 @@ function App() {
                 fullTime={fullTime}
                 setTime={setTime}
             />
+            <Question state={state} />
             <Controller
                 time={workTime}
                 setTime={setWorkTime}
