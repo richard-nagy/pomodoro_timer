@@ -1,4 +1,7 @@
 import { useEffect, useState } from "react";
+import { Box, createTheme, Stack, ThemeProvider } from "@mui/material";
+import Button from "@mui/material/Button";
+import Switch from "@mui/material/Switch";
 import Clock from "./Components/Clock";
 import Controller from "./Components/Controller";
 import Question from "./Components/Question";
@@ -14,6 +17,13 @@ function App() {
     const [fullTime, setFullTime] = useState(0);
     const [tabHasFocus, setTabHasFocus] = useState(true);
     const [newAlert, setNewAlert] = useState(false);
+    const [mode, setMode] = useState("light");
+
+    const darkTheme = createTheme({
+        palette: {
+            mode: mode,
+        },
+    });
 
     // Setup a listener, watches if the page is in focus
     useEffect(() => {
@@ -99,34 +109,38 @@ function App() {
     }, [isTimeRunning, time, state, workTime, shortBreakTime, longBreakTime, numberOfBreak]);
 
     return (
-        <div>
-            <Clock
-                state={state}
-                isTimeRunning={isTimeRunning}
-                setIsTimeRunning={setIsTimeRunning}
-                fullTime={fullTime}
-                setTime={setTime}
-            />
-            <Question state={state} />
-            <Controller
-                time={workTime}
-                setTime={setWorkTime}
-                state="Work"
-                isTimeRunning={isTimeRunning}
-            />
-            <Controller
-                time={shortBreakTime}
-                setTime={setShortBreakTime}
-                state="Short Break"
-                isTimeRunning={isTimeRunning}
-            />
-            <Controller
-                time={longBreakTime}
-                setTime={setLongBreakTime}
-                state="Long Break"
-                isTimeRunning={isTimeRunning}
-            />
-        </div>
+        <ThemeProvider theme={darkTheme}>
+            <div>
+                <Button variant="contained">Test Element</Button>
+                <Switch onChange={() => setMode(mode === "light" ? "dark" : "light")} />
+                <Clock
+                    state={state}
+                    isTimeRunning={isTimeRunning}
+                    setIsTimeRunning={setIsTimeRunning}
+                    fullTime={fullTime}
+                    setTime={setTime}
+                />
+                <Question state={state} />
+                <Controller
+                    time={workTime}
+                    setTime={setWorkTime}
+                    state="Work"
+                    isTimeRunning={isTimeRunning}
+                />
+                <Controller
+                    time={shortBreakTime}
+                    setTime={setShortBreakTime}
+                    state="Short Break"
+                    isTimeRunning={isTimeRunning}
+                />
+                <Controller
+                    time={longBreakTime}
+                    setTime={setLongBreakTime}
+                    state="Long Break"
+                    isTimeRunning={isTimeRunning}
+                />
+            </div>
+        </ThemeProvider>
     );
 }
 
