@@ -1,9 +1,20 @@
+import { TextField } from "@mui/material";
+
 const Question = ({ state }) => {
     return (
-        <div>
-            <h2>{state === "Long Break" && "Time to reflect on the focus question"}</h2>
-            <input placeholder="Focus question" />
-        </div>
+        <TextField
+            InputProps={{
+                sx: {
+                    "& input": {
+                        textAlign: "center",
+                    },
+                },
+                disableUnderline: true,
+            }}
+            placeholder="Enter Focus Qestion"
+            variant="standard"
+            fullWidth
+        />
     );
 };
 

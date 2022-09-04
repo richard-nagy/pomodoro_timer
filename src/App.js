@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
-import { Box, createTheme, Stack, ThemeProvider } from "@mui/material";
-import Button from "@mui/material/Button";
+import { Stack, ThemeProvider, Grid, FormControlLabel, Fab } from "@mui/material";
 import Switch from "@mui/material/Switch";
 import Clock from "./Components/Clock";
 import Controller from "./Components/Controller";
-import Question from "./Components/Question";
+import { lightTheme, darkTheme } from "./theme";
+import SettingsIcon from "@mui/icons-material/Settings";
 
 function App() {
-    const [state, setState] = useState("-");
+    const [state, setState] = useState();
     const [numberOfBreak, setNumberOfBreak] = useState(0);
     const [isTimeRunning, setIsTimeRunning] = useState(false);
     const [workTime, setWorkTime] = useState(15);
@@ -18,12 +18,6 @@ function App() {
     const [tabHasFocus, setTabHasFocus] = useState(true);
     const [newAlert, setNewAlert] = useState(false);
     const [mode, setMode] = useState("light");
-
-    const darkTheme = createTheme({
-        palette: {
-            mode: mode,
-        },
-    });
 
     // Setup a listener, watches if the page is in focus
     useEffect(() => {
@@ -109,37 +103,76 @@ function App() {
     }, [isTimeRunning, time, state, workTime, shortBreakTime, longBreakTime, numberOfBreak]);
 
     return (
-        <ThemeProvider theme={darkTheme}>
-            <div>
-                <Button variant="contained">Test Element</Button>
-                <Switch onChange={() => setMode(mode === "light" ? "dark" : "light")} />
-                <Clock
-                    state={state}
-                    isTimeRunning={isTimeRunning}
-                    setIsTimeRunning={setIsTimeRunning}
-                    fullTime={fullTime}
-                    setTime={setTime}
-                />
-                <Question state={state} />
-                <Controller
-                    time={workTime}
-                    setTime={setWorkTime}
-                    state="Work"
-                    isTimeRunning={isTimeRunning}
-                />
-                <Controller
-                    time={shortBreakTime}
-                    setTime={setShortBreakTime}
-                    state="Short Break"
-                    isTimeRunning={isTimeRunning}
-                />
-                <Controller
-                    time={longBreakTime}
-                    setTime={setLongBreakTime}
-                    state="Long Break"
-                    isTimeRunning={isTimeRunning}
-                />
-            </div>
+        // <ThemeProvider theme={theme}>
+        <ThemeProvider theme={mode === "light" ? lightTheme : darkTheme}>
+            <Grid
+                container
+                alignItems="center"
+                justifyContent="center"
+                style={{ minHeight: "100vh" }}
+                bgcolor="secondary.main"
+            >
+                <Grid
+                    item
+                    bgcolor="secondary.main"
+                    color={"text.primary"}
+                    sx={{ fontSize: "18pt" }}
+                    height="100vh"
+                    maxWidth="500px"
+                    width="100%"
+                >
+                    <Stack spacing={5} justifyContent="center" alignItems="center" height="100vh">
+                        <Stack
+                            direction="row"
+                            justifyContent="space-around"
+                            alignItems="center"
+                            width="100%"
+                        >
+                            <FormControlLabel
+                                control={<Switch color="primary" />}
+                                label={<b>{mode === "light" ? "Light Theme" : "Dark Theme"}</b>}
+                                labelPlacement="start"
+                                onChange={() => setMode(mode === "light" ? "dark" : "light")}
+                            />
+                            <Fab size="small" color="primary">
+                                <SettingsIcon />
+                            </Fab>
+                        </Stack>
+                        <Clock
+                            state={state}
+                            isTimeRunning={isTimeRunning}
+                            setIsTimeRunning={setIsTimeRunning}
+                            fullTime={fullTime}
+                            setTime={setTime}
+                        />
+                        <Stack
+                            justifyContent="center"
+                            alignItems="center"
+                            spacing={5}
+                            direction={{ xs: "column", md: "row" }}
+                        >
+                            <Controller
+                                time={workTime}
+                                setTime={setWorkTime}
+                                state="Work"
+                                isTimeRunning={isTimeRunning}
+                            />
+                            <Controller
+                                time={shortBreakTime}
+                                setTime={setShortBreakTime}
+                                state="Short Break"
+                                isTimeRunning={isTimeRunning}
+                            />
+                            <Controller
+                                time={longBreakTime}
+                                setTime={setLongBreakTime}
+                                state="Long Break"
+                                isTimeRunning={isTimeRunning}
+                            />
+                        </Stack>
+                    </Stack>
+                </Grid>
+            </Grid>
         </ThemeProvider>
     );
 }
