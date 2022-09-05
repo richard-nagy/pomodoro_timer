@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { Stack, ThemeProvider, Grid, FormControlLabel, Fab } from "@mui/material";
+import { Stack, ThemeProvider, Grid, FormControlLabel, Fab, Tooltip } from "@mui/material";
 import Switch from "@mui/material/Switch";
 import Clock from "./Components/Clock";
 import Controller from "./Components/Controller";
 import { lightTheme, darkTheme } from "./theme";
 import SettingsIcon from "@mui/icons-material/Settings";
+import ColorDialog from "./Components/ColorDialog";
 
 function App() {
     const [state, setState] = useState();
@@ -18,6 +19,12 @@ function App() {
     const [tabHasFocus, setTabHasFocus] = useState(true);
     const [newAlert, setNewAlert] = useState(false);
     const [mode, setMode] = useState("light");
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [colors, setColor] = useState({
+        main: "#f44336",
+        light: "#f6685e",
+        dark: "#aa2e25  ",
+    });
 
     // Setup a listener, watches if the page is in focus
     useEffect(() => {
@@ -103,8 +110,7 @@ function App() {
     }, [isTimeRunning, time, state, workTime, shortBreakTime, longBreakTime, numberOfBreak]);
 
     return (
-        // <ThemeProvider theme={theme}>
-        <ThemeProvider theme={mode === "light" ? lightTheme : darkTheme}>
+        <ThemeProvider theme={mode === "light" ? lightTheme(colors) : darkTheme(colors)}>
             <Grid
                 container
                 alignItems="center"
@@ -112,6 +118,29 @@ function App() {
                 style={{ minHeight: "100vh" }}
                 bgcolor="secondary.main"
             >
+                <Stack
+                    direction="row"
+                    justifyContent="flex-end"
+                    alignItems="flex-start"
+                    position="absolute"
+                    width="100vw"
+                    spacing={2}
+                    margin="10px 40px 0 0 "
+                    sx={{ top: 0 }}
+                >
+                    <Tooltip title={`Switch to ${mode === "light" ? "Dark" : "Light"} theme`}>
+                        <FormControlLabel
+                            control={<Switch color="primary" />}
+                            labelPlacement="start"
+                            onChange={() => setMode(mode === "light" ? "dark" : "light")}
+                        />
+                    </Tooltip>
+                    <Tooltip title="Change color">
+                        <Fab size="small" color="primary" onClick={() => setIsDialogOpen(true)}>
+                            <SettingsIcon />
+                        </Fab>
+                    </Tooltip>
+                </Stack>
                 <Grid
                     item
                     bgcolor="secondary.main"
@@ -122,22 +151,6 @@ function App() {
                     width="100%"
                 >
                     <Stack spacing={5} justifyContent="center" alignItems="center" height="100vh">
-                        <Stack
-                            direction="row"
-                            justifyContent="space-around"
-                            alignItems="center"
-                            width="100%"
-                        >
-                            <FormControlLabel
-                                control={<Switch color="primary" />}
-                                label={<b>{mode === "light" ? "Light Theme" : "Dark Theme"}</b>}
-                                labelPlacement="start"
-                                onChange={() => setMode(mode === "light" ? "dark" : "light")}
-                            />
-                            <Fab size="small" color="primary">
-                                <SettingsIcon />
-                            </Fab>
-                        </Stack>
                         <Clock
                             state={state}
                             isTimeRunning={isTimeRunning}
@@ -173,6 +186,11 @@ function App() {
                     </Stack>
                 </Grid>
             </Grid>
+            <ColorDialog
+                isDialogOpen={isDialogOpen}
+                setIsDialogOpen={setIsDialogOpen}
+                setColor={setColor}
+            />
         </ThemeProvider>
     );
 }

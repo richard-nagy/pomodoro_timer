@@ -16,11 +16,11 @@ export default function Controller({ time, setTime, state, isTimeRunning }) {
                     gap: 10,
                 }}
             >
-                <StyledFab onClick={() => setTime(time + 1)} disabled={isTimeRunning}>
+                <StyledFab onClick={() => setTime(time - 1)} disabled={isTimeRunning}>
                     <RemoveIcon />
                 </StyledFab>
                 <div> {time} </div>
-                <StyledFab onClick={() => setTime(time - 1)} disabled={isTimeRunning}>
+                <StyledFab onClick={() => setTime(time + 1)} disabled={isTimeRunning}>
                     <AddIcon />
                 </StyledFab>
             </div>

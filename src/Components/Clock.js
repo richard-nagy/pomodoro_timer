@@ -1,5 +1,5 @@
 import { useTheme } from "@emotion/react";
-import { Button, Stack } from "@mui/material";
+import { Button, Stack, Typography } from "@mui/material";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import Question from "./Question";
 
@@ -21,10 +21,15 @@ export default function Clock({
             direction="column"
             justifyContent="center"
             alignItems="center"
-            spacing={2}
+            spacing={5}
             width="100%"
         >
             <h3>{state}</h3>
+            {state === "Long Break" && (
+                <Typography sx={{ fontStyle: "italic" }}>
+                    Time to reflect on your question
+                </Typography>
+            )}
             <Question state={state} />
             <CountdownCircleTimer
                 size="200"
