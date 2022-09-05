@@ -7,7 +7,7 @@ const StyledFab = styled(({ ...props }) => <Fab {...props} size="small" color="p
 
 export default function Controller({ time, setTime, state, isTimeRunning }) {
     return (
-        <Stack direction="column" justifyContent="center" alignItems="center" spacing={2}>
+        <Stack direction="column" justifyContent="center" alignItems="center" spacing={1}>
             <div
                 style={{
                     display: "flex",
@@ -16,10 +16,10 @@ export default function Controller({ time, setTime, state, isTimeRunning }) {
                     gap: 10,
                 }}
             >
-                <StyledFab onClick={() => setTime(time - 1)} disabled={isTimeRunning}>
+                <StyledFab onClick={() => time > 1 && setTime(time - 1)} disabled={isTimeRunning}>
                     <RemoveIcon />
                 </StyledFab>
-                <div> {time} </div>
+                <div> {time}:00 </div>
                 <StyledFab onClick={() => setTime(time + 1)} disabled={isTimeRunning}>
                     <AddIcon />
                 </StyledFab>

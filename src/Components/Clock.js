@@ -1,7 +1,15 @@
 import { useTheme } from "@emotion/react";
 import { Button, Stack, Typography } from "@mui/material";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
+import { ReactCountdownClock } from "react-countdown-clock";
 import Question from "./Question";
+import {
+    CircularProgressbar,
+    CircularProgressbarWithChildren,
+    buildStyles,
+} from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
+import { lightTheme, darkTheme } from "../theme";
 
 export default function Clock({
     state = "Work",
@@ -9,6 +17,7 @@ export default function Clock({
     setIsTimeRunning,
     fullTime,
     setTime,
+    time,
 }) {
     const theme = useTheme();
 
@@ -31,30 +40,31 @@ export default function Clock({
                 </Typography>
             )}
             <Question state={state} />
-            <CountdownCircleTimer
-                size="200"
-                trailColor={theme.palette.secondary.dark}
-                colors={theme.palette.primary.main}
-                key={state}
-                duration={fullTime}
-                isPlaying={isTimeRunning}
-                onUpdate={(remainingTime) => {
-                    setTime(remainingTime);
+            <div
+                style={{
+                    width: 250,
+                    height: 250,
                 }}
             >
-                {({ remainingTime }) => (
-                    <div style={{ textAlign: "center" }}>
-                        <h1>{remainingTime}</h1>
-                        <Button
-                            size="small"
-                            variant="contained"
-                            onClick={() => setIsTimeRunning(!isTimeRunning)}
-                        >
-                            {isTimeRunning ? "Stop" : "Start"}
-                        </Button>
-                    </div>
-                )}
-            </CountdownCircleTimer>
+                <CircularProgressbarWithChildren
+                    value={100 / (fullTime / time)}
+                    strokeWidth={8}
+                    styles={buildStyles({
+                        textColor: theme.palette.primary.main,
+                        pathColor: theme.palette.primary.main,
+                        trailColor: theme.palette.secondary.dark,
+                    })}
+                >
+                    <h1>{time}</h1>
+                    <Button
+                        size="small"
+                        variant="contained"
+                        onClick={() => setIsTimeRunning(!isTimeRunning)}
+                    >
+                        {isTimeRunning ? "Stop" : "Start"}
+                    </Button>
+                </CircularProgressbarWithChildren>
+            </div>
         </Stack>
     );
 }

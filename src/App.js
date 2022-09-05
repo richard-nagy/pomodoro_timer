@@ -6,6 +6,7 @@ import Controller from "./Components/Controller";
 import { lightTheme, darkTheme } from "./theme";
 import SettingsIcon from "@mui/icons-material/Settings";
 import ColorDialog from "./Components/ColorDialog";
+import AppBar from "./Components/AppBar";
 
 function App() {
     const [state, setState] = useState();
@@ -30,6 +31,7 @@ function App() {
     useEffect(() => {
         const handleFocus = () => {
             setTabHasFocus(true);
+            setNewAlert(false);
             document.title = "React App";
         };
 
@@ -50,13 +52,10 @@ function App() {
     // Start flashing the page title text
     useEffect(() => {
         if (tabHasFocus) {
-            setNewAlert(false);
             return;
         }
 
-        if (newAlert === false) {
-            setNewAlert(false);
-
+        if (!newAlert) {
             return;
         }
 
@@ -72,6 +71,12 @@ function App() {
 
     // Handle when time runs out
     useEffect(() => {
+        const stuff = setInterval(() => {
+            if (isTimeRunning) {
+                setTime((prevTime) => prevTime - 1);
+            }
+        }, 1000);
+
         // When time runs out, set up the next period
         if (time <= 0 && isTimeRunning) {
             switch (state) {
@@ -105,58 +110,42 @@ function App() {
                     setFullTime(workTime);
                     break;
             }
-            setNewAlert(true);
+
+            if (!tabHasFocus) {
+                setNewAlert(true);
+            }
         }
+
+        return () => clearInterval(stuff);
     }, [isTimeRunning, time, state, workTime, shortBreakTime, longBreakTime, numberOfBreak]);
 
     return (
         <ThemeProvider theme={mode === "light" ? lightTheme(colors) : darkTheme(colors)}>
             <Grid
                 container
-                alignItems="center"
+                // alignItems="center"
                 justifyContent="center"
-                style={{ minHeight: "100vh" }}
+                style={{ height: "100vh" }}
                 bgcolor="secondary.main"
             >
-                <Stack
-                    direction="row"
-                    justifyContent="flex-end"
-                    alignItems="flex-start"
-                    position="absolute"
-                    width="100vw"
-                    spacing={2}
-                    margin="10px 40px 0 0 "
-                    sx={{ top: 0 }}
-                >
-                    <Tooltip title={`Switch to ${mode === "light" ? "Dark" : "Light"} theme`}>
-                        <FormControlLabel
-                            control={<Switch color="primary" />}
-                            labelPlacement="start"
-                            onChange={() => setMode(mode === "light" ? "dark" : "light")}
-                        />
-                    </Tooltip>
-                    <Tooltip title="Change color">
-                        <Fab size="small" color="primary" onClick={() => setIsDialogOpen(true)}>
-                            <SettingsIcon />
-                        </Fab>
-                    </Tooltip>
-                </Stack>
+                <AppBar mode={mode} setMode={setMode} setIsDialogOpen={setIsDialogOpen} />
                 <Grid
                     item
                     bgcolor="secondary.main"
                     color={"text.primary"}
                     sx={{ fontSize: "18pt" }}
-                    height="100vh"
-                    maxWidth="500px"
+                    maxWidth="600px"
                     width="100%"
+                    padding={4}
                 >
-                    <Stack spacing={5} justifyContent="center" alignItems="center" height="100vh">
+                    <Stack spacing={5} justifyContent="center" alignItems="center">
                         <Clock
                             state={state}
                             isTimeRunning={isTimeRunning}
                             setIsTimeRunning={setIsTimeRunning}
                             fullTime={fullTime}
                             setTime={setTime}
+                            time={time}
                         />
                         <Stack
                             justifyContent="center"

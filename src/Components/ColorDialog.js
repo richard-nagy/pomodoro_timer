@@ -51,7 +51,6 @@ const colors = [
 
 export default function ColorDialog({ isDialogOpen, setIsDialogOpen, setColor }) {
     const handleClose = () => {
-        console.log("be lett zárva érték kiválasztás nélkül");
         setIsDialogOpen(false);
     };
 

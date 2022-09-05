@@ -1,8 +1,6 @@
 import { createTheme } from "@mui/material";
 
 const lightTheme = (colors) => {
-    console.log(colors);
-
     return createTheme({
         typography: {
             fontFamily: ["Dosis", "sans-serif"].join(","),
@@ -20,8 +18,6 @@ const lightTheme = (colors) => {
 };
 
 const darkTheme = (colors) => {
-    console.log(colors);
-
     return createTheme({
         typography: {
             fontFamily: ["Dosis", "sans-serif"].join(","),
