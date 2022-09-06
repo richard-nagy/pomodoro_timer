@@ -1,42 +1,41 @@
-import { useEffect, useState } from "react";
-import { Stack, ThemeProvider, Grid, FormControlLabel, Fab, Tooltip } from "@mui/material";
-import Switch from "@mui/material/Switch";
+import { useEffect, useRef, useState } from "react";
+import { Stack, ThemeProvider, Grid } from "@mui/material";
+import { lightTheme, darkTheme } from "./theme";
 import Clock from "./Components/Clock";
 import Controller from "./Components/Controller";
-import { lightTheme, darkTheme } from "./theme";
-import SettingsIcon from "@mui/icons-material/Settings";
 import ColorDialog from "./Components/ColorDialog";
 import AppBar from "./Components/AppBar";
 
 function App() {
     const [state, setState] = useState();
-    const [numberOfBreak, setNumberOfBreak] = useState(0);
-    const [isTimeRunning, setIsTimeRunning] = useState(false);
-    const [workTime, setWorkTime] = useState(15);
-    const [shortBreakTime, setShortBreakTime] = useState(10);
-    const [longBreakTime, setLongBreakTime] = useState(15);
     const [time, setTime] = useState(0);
-    const [fullTime, setFullTime] = useState(0);
-    const [tabHasFocus, setTabHasFocus] = useState(true);
-    const [newAlert, setNewAlert] = useState(false);
     const [mode, setMode] = useState("light");
+    const [workTime, setWorkTime] = useState(15);
+    const [shortBreakTime, setShortBreakTime] = useState(5);
+    const [longBreakTime, setLongBreakTime] = useState(10);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [isAlertOn, setIsAlertOn] = useState(false);
+    const [isTimeRunning, setIsTimeRunning] = useState(false);
     const [colors, setColor] = useState({
         main: "#f44336",
         light: "#f6685e",
         dark: "#aa2e25  ",
     });
 
+    const tabHasFocus = useRef(true);
+    const numberOfBreak = useRef(0);
+    const fullTime = useRef(0);
+
     // Setup a listener, watches if the page is in focus
     useEffect(() => {
         const handleFocus = () => {
-            setTabHasFocus(true);
-            setNewAlert(false);
+            tabHasFocus.current = true;
+            setIsAlertOn(false);
             document.title = "React App";
         };
 
         const handleBlur = () => {
-            setTabHasFocus(false);
+            tabHasFocus.current = false;
         };
 
         window.addEventListener("focus", handleFocus);
@@ -51,23 +50,23 @@ function App() {
     // If a countdown is finished, and the page is out of focus
     // Start flashing the page title text
     useEffect(() => {
-        if (tabHasFocus) {
+        if (tabHasFocus.current) {
             return;
         }
 
-        if (!newAlert) {
+        if (!isAlertOn) {
             return;
         }
 
         const alert = setInterval(() => {
-            const title1 = "React App";
-            const title2 = "🔴 Alert";
+            const title1 = "⏰ Time is up!";
+            const title2 = "Pomodoro App";
 
             document.title === title1 ? (document.title = title2) : (document.title = title1);
         }, 1000);
 
         return () => clearInterval(alert);
-    }, [tabHasFocus, newAlert]);
+    }, [isAlertOn]);
 
     // Handle when time runs out
     useEffect(() => {
@@ -78,52 +77,53 @@ function App() {
         }, 1000);
 
         // When time runs out, set up the next period
-        if (time <= 0 && isTimeRunning) {
+        if ((time < 0 || time === undefined) && isTimeRunning) {
+            const multiplier = 60;
+
             switch (state) {
                 case "Work":
                     // If we already head two short breaks, the next one will be long
-                    if (numberOfBreak === 2) {
+                    if (numberOfBreak.current === 2) {
                         setState("Long Break");
-                        setTime(longBreakTime);
-                        setFullTime(longBreakTime);
+                        setTime(longBreakTime * multiplier);
+                        fullTime.current = longBreakTime * multiplier;
                         break;
                     }
                     setState("Short Break");
-                    setTime(shortBreakTime);
-                    setFullTime(shortBreakTime);
+                    setTime(shortBreakTime * multiplier);
+                    fullTime.current = shortBreakTime * multiplier;
                     break;
                 case "Short Break":
                     setState("Work");
-                    setTime(workTime);
-                    setFullTime(workTime);
-                    setNumberOfBreak((prevRotation) => prevRotation + 1);
+                    setTime(workTime * multiplier);
+                    fullTime.current = workTime * multiplier;
+                    numberOfBreak.current++;
                     break;
                 case "Long Break":
                     setState("Work");
-                    setTime(workTime);
-                    setFullTime(workTime);
-                    setNumberOfBreak(0);
+                    setTime(workTime * multiplier);
+                    fullTime.current = workTime * multiplier;
+                    numberOfBreak.current = 0;
                     break;
                 default:
                     setState("Work");
-                    setTime(workTime);
-                    setFullTime(workTime);
+                    setTime(workTime * multiplier);
+                    fullTime.current = workTime * multiplier;
                     break;
             }
 
-            if (!tabHasFocus) {
-                setNewAlert(true);
+            if (!tabHasFocus.current) {
+                setIsAlertOn(true);
             }
         }
 
         return () => clearInterval(stuff);
-    }, [isTimeRunning, time, state, workTime, shortBreakTime, longBreakTime, numberOfBreak]);
+    }, [time, state, workTime, shortBreakTime, longBreakTime, isTimeRunning]);
 
     return (
         <ThemeProvider theme={mode === "light" ? lightTheme(colors) : darkTheme(colors)}>
             <Grid
                 container
-                // alignItems="center"
                 justifyContent="center"
                 style={{ height: "100vh" }}
                 bgcolor="secondary.main"
@@ -134,7 +134,7 @@ function App() {
                     bgcolor="secondary.main"
                     color={"text.primary"}
                     sx={{ fontSize: "18pt" }}
-                    maxWidth="600px"
+                    maxWidth="szorzo0px"
                     width="100%"
                     padding={4}
                 >

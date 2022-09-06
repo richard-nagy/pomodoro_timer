@@ -1,19 +1,12 @@
-import styled from "@emotion/styled";
 import {
     Button,
     Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
-    Fab,
     Grid,
     IconButton,
-    List,
-    ListItem,
-    Paper,
 } from "@mui/material";
-import { Box } from "@mui/system";
-import { Fragment } from "react";
 import CircleTwoToneIcon from "@mui/icons-material/CircleTwoTone";
 
 const colors = [
@@ -72,7 +65,7 @@ export default function ColorDialog({ isDialogOpen, setIsDialogOpen, setColor })
                 >
                     {colors.map((color) => {
                         return (
-                            <Grid item xs={4} sx={{ textAlign: "center" }}>
+                            <Grid item xs={4} sx={{ textAlign: "center" }} key={color.main}>
                                 <IconButton onClick={() => handleColorClick(color)}>
                                     <CircleTwoToneIcon
                                         sx={{ color: color.main, fontSize: "30pt" }}
